@@ -1,7 +1,3 @@
-//package aoc;
-//
-//import java.util.List;
-//
 //public class DayTemplate extends Day {
 //
 //    static {
