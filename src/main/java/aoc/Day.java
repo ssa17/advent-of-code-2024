@@ -1,7 +1,6 @@
 package aoc;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,13 +9,26 @@ import static java.util.stream.Collectors.toList;
 public abstract class Day {
 
     protected static Day currentDay;
+    private final int dayNumber;
+
+    protected Day(int dayNumber) {
+        this.dayNumber = dayNumber;
+    }
 
     public abstract String part1(List<String> input);
+
+    private String part1() {
+        return this.part1(loadInput());
+    }
+
+    private String part2() {
+        return this.part2(loadInput());
+    }
 
     public abstract String part2(List<String> input);
 
     private List<String> loadInput() {
-        String fileName = String.format("day%02d.txt", this.dayNumber());
+        String fileName = String.format("day%02d.txt", dayNumber);
 
         InputStream inputForDay = ClassLoader.getSystemResourceAsStream(fileName);
         if (Objects.isNull(inputForDay)) {
@@ -38,23 +50,15 @@ public abstract class Day {
     }
 
     void printPart2() {
-        System.out.println("Day " + this.dayNumber() + ", Part 2: " + this.part2(this.loadInput()));
+        System.out.println("Day " + this.dayNumber + ", Part 2: " + this.part2(this.loadInput()));
     }
 
     void printPart1() {
-        System.out.println("Day " + this.dayNumber() + ", Part 1: " + this.part1(this.loadInput()));
+        System.out.println("Day " + this.dayNumber + ", Part 1: " + this.part1(this.loadInput()));
     }
 
     public int dayNumber() {
-        return Integer.parseInt(this.getClass().getSimpleName().replaceAll("[^0-9]", ""));
+        return this.dayNumber;
     }
 
-    protected static Day buildCurrentDay(Object o) {
-        try {
-            Class<? extends Day> childDayClass = o.getClass().getEnclosingClass().asSubclass(Day.class);
-            return childDayClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException("Failed to determine current day. Make sure an object declared and initialised in the child day class is passed in, and that the child class has a noarg constructor available (such as the default one).", e);
-        }
-    }
 }
