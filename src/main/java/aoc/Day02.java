@@ -1,8 +1,7 @@
 package aoc;
 
 import java.util.List;
-
-import static java.lang.Integer.parseInt;
+import java.util.stream.Stream;
 
 public class Day02 extends Day {
 
@@ -23,52 +22,57 @@ public class Day02 extends Day {
         int safeReports = 0;
 
         for (String report : input) {
-            String[] reportLevel = report.split(" ");
-            boolean isSafe = true;
-            boolean isIncreasing = true;
-
-            int previousLevel = -1;
-            for (int i = 0; i < reportLevel.length; i++) {
-                int currentLevel = parseInt(reportLevel[i]);
-
-                if (previousLevel == -1) {
-                    previousLevel = currentLevel;
-                    isIncreasing = currentLevel < parseInt(reportLevel[i + 1]);
-                    continue;
-                }
-
-                if (isIncreasing && previousLevel > currentLevel) {
-                    isSafe = false;
-                    break;
-                } else if (!isIncreasing && previousLevel < currentLevel) {
-                    isSafe = false;
-                    break;
-                }
-
-                if (previousLevel == currentLevel) {
-                    isSafe = false;
-                    break;
-                }
-
-                int diff = Math.abs(currentLevel - previousLevel);
-
-                if (diff > 3) {
-                    isSafe = false;
-                    break;
-                }
-                previousLevel = currentLevel;
-            }
-            if (isSafe) {
+            if (isSafeReport(report)) {
                 safeReports++;
             }
         }
-
         return String.valueOf(safeReports);
     }
 
     @Override
     public String part2(List<String> input) {
         return null;
+    }
+
+    private boolean isSafeReport(String report) {
+        List<Integer> reportLevels = Stream.of(report.split(" ")).map(Integer::parseInt).toList();
+
+        if (isNotIncreasing(reportLevels) && isNotDecreasing(reportLevels)) {
+            return false;
+        }
+
+        for (int i = 0; i < reportLevels.size() - 1; i++) {
+            if (levelsEqual(reportLevels.get(i), reportLevels.get(i + 1)) || levelNotWithinRange(reportLevels.get(i), reportLevels.get(i + 1))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isNotIncreasing(List<Integer> report) {
+        for (int i = 0; i < report.size() - 1; i++) {
+                if (report.get(i) > report.get(i + 1)) {
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    private boolean isNotDecreasing(List<Integer> report) {
+        for (int i = 0; i < report.size() - 1; i++) {
+            if (report.get(i) < report.get(i + 1)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean levelsEqual(int a, int b) {
+        return a == b;
+    }
+
+    private boolean levelNotWithinRange(int a, int b) {
+        return Math.abs(a - b) > 3;
     }
 
 }
