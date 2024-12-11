@@ -1,5 +1,6 @@
 package aoc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,38 +23,60 @@ public class Day02 extends Day {
         int safeReports = 0;
 
         for (String report : input) {
-            if (isSafeReport(report)) {
+            if (isSafeReport(turnReportIntoListOfLevels(report))) {
                 safeReports++;
             }
         }
-        return String.valueOf(safeReports);
+        return safeReports + "";
     }
 
     @Override
     public String part2(List<String> input) {
-        return null;
+        int safeReports = 0;
+
+        for (String report : input) {
+            if (isSafeReport(turnReportIntoListOfLevels(report))) {
+                safeReports++;
+            } else if (isSafeReportAfterTolerating(turnReportIntoListOfLevels(report))) {
+                safeReports++;
+            }
+        }
+        return safeReports + "";
     }
 
-    private boolean isSafeReport(String report) {
-        List<Integer> reportLevels = Stream.of(report.split(" ")).map(Integer::parseInt).toList();
-
-        if (isNotIncreasing(reportLevels) && isNotDecreasing(reportLevels)) {
+    private boolean isSafeReport(List<Integer> report) {
+        if (isNotIncreasing(report) && isNotDecreasing(report)) {
             return false;
         }
 
-        for (int i = 0; i < reportLevels.size() - 1; i++) {
-            if (levelsEqual(reportLevels.get(i), reportLevels.get(i + 1)) || levelNotWithinRange(reportLevels.get(i), reportLevels.get(i + 1))) {
+        for (int i = 0; i < report.size() - 1; i++) {
+            if (levelsEqual(report.get(i), report.get(i + 1)) || levelNotWithinRange(report.get(i), report.get(i + 1))) {
                 return false;
             }
         }
         return true;
     }
 
+    private boolean isSafeReportAfterTolerating(List<Integer> report) {
+        for (int i = 0; i < report.size(); i++) {
+            List<Integer> reportLevelsCopy = new ArrayList<>(report);
+            reportLevelsCopy.remove(i);
+            if (isSafeReport(reportLevelsCopy)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<Integer> turnReportIntoListOfLevels(String report) {
+        return Stream.of(report.split(" ")).map(Integer::parseInt).toList();
+    }
+
     private boolean isNotIncreasing(List<Integer> report) {
         for (int i = 0; i < report.size() - 1; i++) {
-                if (report.get(i) > report.get(i + 1)) {
-                    return true;
-                }
+            if (report.get(i) > report.get(i + 1)) {
+                return true;
+            }
         }
         return false;
     }

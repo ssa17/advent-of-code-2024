@@ -43,4 +43,18 @@ class Day02Test {
         assertThat(new Day02().part1(input)).isEqualTo("2");
     }
 
+    @Test
+    public void givenUnsafeTolerableReport_returnCountOfSafeReports() {
+        List<String> input = List.of("1 2 9 4 5");
+
+        assertThat(new Day02().part2(input)).isEqualTo("1");
+    }
+
+    @Test
+    public void givenListOfUnsafeTolerableReports_returnCountOfSafeReports() {
+        List<String> input = List.of("7 6 4 2 1", "1 2 7 8 9", "9 7 6 2 1", "1 3 2 4 5", "8 6 4 4 1", "1 3 6 7 9");
+
+        assertThat(new Day02().part2(input)).isEqualTo("4");
+    }
+
 }
